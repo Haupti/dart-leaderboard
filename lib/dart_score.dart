@@ -12,8 +12,6 @@ import 'package:dart_score/domain/utils.dart';
 void run() async {
   var server = await HttpServer.bind(InternetAddress.anyIPv6, 3000);
   await for (HttpRequest request in server) {
-    print("METHOD: ${request.method}");
-    print("PATH: ${request.uri.path}");
     switch ((request.method, request.uri.path)) {
       case ("GET", "/"):
         request.respond(ServerResponse.html(
