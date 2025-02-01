@@ -1,11 +1,13 @@
 import 'dart:io';
 
 import 'package:dart_score/components/add_match.dart';
-import 'package:dart_score/components/add_player.dart';
 import 'package:dart_score/components/base.dart';
+import 'package:dart_score/components/manage_player.dart';
 import 'package:dart_score/components/matches.dart';
 import 'package:dart_score/components/ranking.dart';
+import 'package:dart_score/components/utils.dart';
 import 'package:dart_score/domain/api_service.dart';
+import 'package:dart_score/domain/utils.dart';
 
 void run() async {
   var server = await HttpServer.bind(InternetAddress.anyIPv6, 3000);
@@ -18,9 +20,9 @@ void run() async {
           basePage(componentRanking()).render(),
         ));
         break;
-      case ("GET", "/add-player"):
+      case ("GET", "/manage-players"):
         request.respond(ServerResponse.html(
-          basePage(componentAddPlayer()).render(),
+          basePage(componentManagePlayers()).render(),
         ));
         break;
       case ("GET", "/add-match"):
@@ -38,6 +40,16 @@ void run() async {
         request.respond(ServerResponse.html(
           componentPlayerPagePlayerList().render(),
         ));
+        break;
+      case ("POST", "/api/delete-player"):
+        final Status status = await ApiService.deletePlayer(request);
+        if (status is Failure) {
+          request.error(status.reason);
+        } else {
+          request.respond(ServerResponse.html(
+            emptyComponent().render(),
+          ));
+        }
         break;
       case ("POST", "/api/add-match"):
         final failMessage = await ApiService.addMatch(request);
@@ -81,5 +93,11 @@ extension Respond on HttpRequest {
     this.response.statusCode = response.status;
     this.response.write(response.body);
     this.response.close();
+  }
+
+  void error(String reason) {
+    response.headers.add("Content-Type", "text/plain");
+    response.statusCode = 500;
+    response.close();
   }
 }

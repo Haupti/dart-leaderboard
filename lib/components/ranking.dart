@@ -6,7 +6,7 @@ Html componentRanking() {
 <h1> Leaderboard </h1>
 <table style="margin-top: 8px;">
   <tr>
-    <th>Position</th>
+    <th>#</th>
     <th>Name</th>
     <th>Points</th>
     <th>Wins</th>
@@ -19,7 +19,6 @@ Html componentRanking() {
 
 String mapToTableRows(List<RankedPlayer> players) {
   List<String> results = [];
-  print("ITERATE OVER PLAYERs: ${players.length}");
   for (int i = 0; i < players.length; i++) {
     final player = players[i];
     results.add("""

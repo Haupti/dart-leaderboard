@@ -14,12 +14,19 @@ class RankedPlayerService {
     }
 
     for (final match in matches) {
-      idToPlayer[match.winnerId]!.wins += 1;
-      idToPlayer[match.winnerId]!.total += 1;
-      idToPlayer[match.winnerId]!.points += match.points;
-
-      idToPlayer[match.looserId]!.total += 1;
-      idToPlayer[match.looserId]!.points -= match.points;
+      final winner = idToPlayer[match.winnerId];
+      if (winner != null) {
+        winner.wins += 1;
+        winner.total += 1;
+        winner.points += match.points;
+        idToPlayer[winner.id] = winner;
+      }
+      final looser = idToPlayer[match.looserId];
+      if (looser != null) {
+        looser.total += 1;
+        looser.points -= match.points;
+        idToPlayer[looser.id] = looser;
+      }
     }
 
     List<RankedPlayer> matchData = idToPlayer.values.toList();

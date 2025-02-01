@@ -71,6 +71,30 @@ Html basePage(Html main) {
         background-color: #f9f9f9;
       }
 
+      select, input[type="text"] {
+        border-radius: 5px;
+        background-color: white;
+        border: 2px solid #dddddd;
+        padding: 4px;
+      }
+      select:hover, input[type="text"] {
+        border: 2px solid #cccccc;
+        cursor: pointer;
+      }
+
+      button, input[type="submit"] {
+        border-radius: 5px;
+        border: none;
+        padding: 8px;
+        background-color: #dddddd;
+        color: black;
+      }
+
+      button:hover, input[type="submit"]:hover {
+        background-color: #cccccc;
+        cursor: pointer;
+      }
+
     </style>
   </head> 
   <body>
@@ -79,7 +103,7 @@ Html basePage(Html main) {
       <a href="/"> Leaderboard </a>
       <a href="/matches"> Matches </a>
       <a href="/add-match"> Add Match </a>
-      <a href="/add-player"> Add Player </a>
+      <a href="/manage-players"> Manage Players </a>
     </nav>
     <main>
       ${main.render()}

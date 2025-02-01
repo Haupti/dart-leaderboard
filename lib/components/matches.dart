@@ -39,11 +39,11 @@ List<({String winner, String looser, int points, String timestamp})>
       matchData = [];
 
   for (final match in matches) {
-    final winnerName = PlayerRepository.getPlayerById(match.winnerId).name;
-    final looserName = PlayerRepository.getPlayerById(match.looserId).name;
+    final winnerName = PlayerRepository.getPlayerById(match.winnerId)?.name;
+    final looserName = PlayerRepository.getPlayerById(match.looserId)?.name;
     matchData.add((
-      winner: winnerName,
-      looser: looserName,
+      winner: winnerName ?? "&#42;deleted&#42;",
+      looser: looserName ?? "&#42;deleted&#42;",
       points: match.points,
       timestamp: match.timestamp
     ));

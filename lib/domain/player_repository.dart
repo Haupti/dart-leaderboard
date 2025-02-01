@@ -10,7 +10,11 @@ class PlayerRepository {
     players.add(player);
   }
 
-  static Player getPlayerById(String id) {
-    return players.where((it) => it.id == id).elementAt(0);
+  static Player? getPlayerById(String id) {
+    return players.where((it) => it.id == id).elementAtOrNull(0);
+  }
+
+  static void removePlayer(String id) {
+    players = players.where((it) => it.id != id).toList();
   }
 }

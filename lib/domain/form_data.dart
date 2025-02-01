@@ -8,6 +8,10 @@ class FormData {
     return parsed[valueName]!;
   }
 
+  String? getStringValueOrNull(String valueName) {
+    return parsed[valueName];
+  }
+
   static HashMap<String, String> parse(String raw) {
     final Iterable<List<String>> pairs =
         raw.split("&").map((it) => it.split("="));
