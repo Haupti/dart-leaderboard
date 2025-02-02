@@ -20,19 +20,7 @@ void run() async {
     Authentication? auth = Authentication.from(request.headers);
     switch ((request.method, request.uri.path)) {
       case ("POST", "/api/login"):
-        String content = await utf8.decodeStream(request);
-        final data = FormData(content);
-        final username = data.getStringValue("username");
-        final password = data.getStringValue("password");
-        auth = Authentication.fromAuthString("$username:$password");
-        request.response.statusCode = 200;
-        if (auth != null) {
-          request.response.headers.add("Set-Cookie",
-              "username=$username; Domain=${Global.domain}; ${Global.domain == "localhost" ? "" : "Secure"}; Path=/; HttpOnly");
-          request.response.headers.add("Set-Cookie",
-              "password=$password; Domain=${Global.domain}; ${Global.domain == "localhost" ? "" : "Secure"}; Path=/; HttpOnly");
-        }
-        request.response.close();
+        auth = await handleLogin(request);
         continue;
     }
 
@@ -46,37 +34,65 @@ void run() async {
   }
 }
 
+Future<Authentication?> handleLogin(HttpRequest request) async {
+  String content = await utf8.decodeStream(request);
+  final data = FormData(content);
+  final username = data.getStringValue("username");
+  final password = data.getStringValue("password");
+  final auth = Authentication.fromAuthString("$username:$password");
+  request.response.statusCode = 200;
+  if (auth != null) {
+    request.response.headers.add("Set-Cookie",
+        "username=$username; Domain=${Global.domain}; ${Global.domain == "localhost" ? "" : "Secure"}; Path=/; HttpOnly");
+    request.response.headers.add("Set-Cookie",
+        "password=$password; Domain=${Global.domain}; ${Global.domain == "localhost" ? "" : "Secure"}; Path=/; HttpOnly");
+    request.response.headers.add("HX-Refresh", "true");
+  }
+  request.response.close();
+  return auth;
+}
+
 Future<void> handleRequest(HttpRequest request, Authentication auth) async {
   switch ((request.method, request.uri.path)) {
     case ("GET", "/"):
       request.respond(ServerResponse.html(
-        basePage(componentRanking()).render(),
+        basePage(componentRanking(), auth).render(),
       ));
       break;
     case ("GET", "/manage-players"):
-      request.respond(ServerResponse.html(
-        basePage(componentManagePlayers()).render(),
-      ));
+      if (auth.level != Level.admin) {
+        request.forbidden();
+      } else {
+        request.respond(ServerResponse.html(
+          basePage(componentManagePlayers(), auth).render(),
+        ));
+      }
       break;
     case ("GET", "/add-match"):
       request.respond(ServerResponse.html(
-        basePage(componentAddMatch()).render(),
+        basePage(componentAddMatch(), auth).render(),
       ));
       break;
     case ("GET", "/matches"):
       request.respond(ServerResponse.html(
-        basePage(componentMatches()).render(),
+        basePage(componentMatches(), auth).render(),
       ));
       break;
     case ("POST", "/api/add-player"):
-      await ApiService.addPlayer(request);
-      request.respond(ServerResponse.html(
-        componentPlayerPagePlayerList().render(),
-      ));
+      final status = await ApiService.addPlayer(request, auth);
+      if (status is NotAllowed) {
+        request.forbidden();
+      } else {
+        request.respond(ServerResponse.html(
+          componentPlayerPagePlayerList().render(),
+        ));
+      }
       break;
     case ("POST", "/api/delete-player"):
-      final Status status = await ApiService.deletePlayer(request);
-      if (status is Failure) {
+      final Status status = await ApiService.deletePlayer(request, auth);
+      if (status is NotAllowed) {
+        request.forbidden();
+      } else if (status is Failure) {
         request.error(status.reason);
       } else {
         request.respond(ServerResponse.html(
@@ -128,8 +144,12 @@ extension Respond on HttpRequest {
   }
 
   void error(String reason) {
-    response.headers.add("Content-Type", "text/plain");
     response.statusCode = 500;
+    response.close();
+  }
+
+  void forbidden() {
+    response.statusCode = 403;
     response.close();
   }
 }

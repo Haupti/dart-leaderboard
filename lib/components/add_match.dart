@@ -8,14 +8,14 @@ Html componentAddMatch() {
   <label for="winner">
     Winner:
     <select style="width: 100%;" name="winner-id" id="winner" type="select" value="Winner">
-      <option value="--">"--"</option>
+      <option value="--">--</option>
       ${PlayerRepository.getAllPlayers().map((it) => """<option value="${it.id}">${it.name}</option>""").join("\n")}
     </select>
   </label>
   <label for="looser">
     Looser:
     <select style="width: 100%;" name="looser-id" id="looser" type="select" value="Looser">
-      <option value="--">"--"</option>
+      <option value="--">--</option>
       ${PlayerRepository.getAllPlayers().map((it) => """<option value="${it.id}">${it.name}</option>""").join("\n")}
     </select>
   </label>

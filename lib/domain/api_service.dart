@@ -2,6 +2,7 @@ import 'dart:collection';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:dart_score/domain/auth/authentication.dart';
 import 'package:dart_score/domain/dart_match.dart';
 import 'package:dart_score/domain/elo_calculator.dart';
 import 'package:dart_score/domain/form_data.dart';
@@ -12,14 +13,23 @@ import 'package:dart_score/domain/ranked_player_service.dart';
 import 'package:dart_score/domain/utils.dart';
 
 class ApiService {
-  static Future<void> addPlayer(HttpRequest request) async {
+  static Future<Status> addPlayer(
+      HttpRequest request, Authentication auth) async {
+    if (auth.level != Level.admin) {
+      return NotAllowed();
+    }
     String content = await utf8.decodeStream(request);
     final data = FormData(content);
     PlayerRepository.addPlayer(
         Player.create(data.getStringValue("player-name")));
+    return Success();
   }
 
-  static Future<Status> deletePlayer(HttpRequest request) async {
+  static Future<Status> deletePlayer(
+      HttpRequest request, Authentication auth) async {
+    if (auth.level != Level.admin) {
+      return NotAllowed();
+    }
     String content = await utf8.decodeStream(request);
     final data = FormData(content);
     final id = data.getStringValueOrNull("player-id");

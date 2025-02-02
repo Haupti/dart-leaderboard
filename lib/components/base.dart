@@ -1,13 +1,15 @@
 import 'package:dart_score/components/html.dart';
+import 'package:dart_score/components/utils.dart';
+import 'package:dart_score/domain/auth/authentication.dart';
 
-Html basePage(Html main) {
+Html basePage(Html main, Authentication? auth) {
   return rootPage(Html("""
 <nav style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">
   <p style="font-size: 36px; margin: 0 8px 0 0;"><strong>&#127919;</strong></p>
   <a href="/"> Leaderboard </a>
   <a href="/matches"> Matches </a>
   <a href="/add-match"> Add Match </a>
-  <a href="/manage-players"> Manage Players </a>
+  ${Html("""<a href="/manage-players"> Manage Players </a>""").adminOnly(auth)}
 </nav>
 <main>
   ${main.render()}

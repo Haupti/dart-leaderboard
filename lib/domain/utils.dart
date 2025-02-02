@@ -7,3 +7,5 @@ class Failure implements Status {
   Failure(this.reason);
 }
 
+class NotAllowed implements Status {}
+
