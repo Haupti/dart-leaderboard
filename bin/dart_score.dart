@@ -8,6 +8,13 @@ void main(List<String> arguments) {
   if (dataPath == null) {
     throw "'DATA_PATH' not set";
   }
+  String? domain;
+  if (arguments.isEmpty) {
+    domain = "localhost";
+  } else {
+    domain = arguments[0];
+  }
   Global.dataPath = dataPath;
+  Global.domain = domain;
   run();
 }

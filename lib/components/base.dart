@@ -1,6 +1,20 @@
 import 'package:dart_score/components/html.dart';
 
 Html basePage(Html main) {
+  return rootPage(Html("""
+<nav style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">
+  <p style="font-size: 36px; margin: 0 8px 0 0;"><strong>&#127919;</strong></p>
+  <a href="/"> Leaderboard </a>
+  <a href="/matches"> Matches </a>
+  <a href="/add-match"> Add Match </a>
+  <a href="/manage-players"> Manage Players </a>
+</nav>
+<main>
+  ${main.render()}
+</main>"""));
+}
+
+Html rootPage(Html body) {
   return Html("""
 <!DOCTYPE html>
 <html>
@@ -71,13 +85,13 @@ Html basePage(Html main) {
         background-color: #f9f9f9;
       }
 
-      select, input[type="text"] {
+      select, input[type="text"], input[type="password"] {
         border-radius: 5px;
         background-color: white;
         border: 2px solid #dddddd;
         padding: 4px;
       }
-      select:hover, input[type="text"] {
+      select:hover, input[type="text"], input[type="password"] {
         border: 2px solid #cccccc;
         cursor: pointer;
       }
@@ -98,16 +112,7 @@ Html basePage(Html main) {
     </style>
   </head> 
   <body>
-    <nav style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">
-      <p style="font-size: 36px; margin: 0 8px 0 0;"><strong>&#127919;</strong></p>
-      <a href="/"> Leaderboard </a>
-      <a href="/matches"> Matches </a>
-      <a href="/add-match"> Add Match </a>
-      <a href="/manage-players"> Manage Players </a>
-    </nav>
-    <main>
-      ${main.render()}
-    </main>
+    ${body.render()}
   </body>
 </html>
 """);
