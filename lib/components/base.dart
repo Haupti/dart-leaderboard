@@ -1,5 +1,4 @@
 import 'package:dart_score/components/html.dart';
-import 'package:dart_score/components/utils.dart';
 import 'package:dart_score/domain/auth/authentication.dart';
 
 Html basePage(Html main, Authentication? auth) {
@@ -9,7 +8,7 @@ Html basePage(Html main, Authentication? auth) {
   <a href="/"> Leaderboard </a>
   <a href="/matches"> Matches </a>
   <a href="/add-match"> Add Match </a>
-  ${Html("""<a href="/manage-players"> Manage Players </a>""").adminOnly(auth)}
+  <a href="/manage-players"> Manage Players </a>
 </nav>
 <main>
   ${main.render()}

@@ -15,9 +15,6 @@ import 'package:dart_score/domain/utils.dart';
 class ApiService {
   static Future<Status> addPlayer(
       HttpRequest request, Authentication auth) async {
-    if (auth.level != Level.admin) {
-      return NotAllowed();
-    }
     String content = await utf8.decodeStream(request);
     final data = FormData(content);
     PlayerRepository.addPlayer(
@@ -27,9 +24,6 @@ class ApiService {
 
   static Future<Status> deletePlayer(
       HttpRequest request, Authentication auth) async {
-    if (auth.level != Level.admin) {
-      return NotAllowed();
-    }
     String content = await utf8.decodeStream(request);
     final data = FormData(content);
     final id = data.getStringValueOrNull("player-id");
