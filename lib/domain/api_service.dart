@@ -17,8 +17,11 @@ class ApiService {
       HttpRequest request, Authentication auth) async {
     String content = await utf8.decodeStream(request);
     final data = FormData(content);
-    PlayerRepository.addPlayer(
-        Player.create(data.getStringValue("player-name")));
+    final username = data.getStringValueOrNull("player-name");
+    if (username == null) {
+      return Failure("no user name");
+    }
+    PlayerRepository.addPlayer(Player.create(username));
     return Success();
   }
 
@@ -40,8 +43,11 @@ class ApiService {
   static Future<String?> addMatch(HttpRequest request) async {
     String content = await utf8.decodeStream(request);
     final data = FormData(content);
-    final winnerId = data.getStringValue("winner-id");
-    final looserId = data.getStringValue("looser-id");
+    final winnerId = data.getStringValueOrNull("winner-id");
+    final looserId = data.getStringValueOrNull("looser-id");
+    if (winnerId == null || looserId == null) {
+      return "Invalid data, missing ids";
+    }
     if (winnerId == "--" || looserId == "--") {
       return "Please select two players";
     }

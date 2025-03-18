@@ -4,10 +4,6 @@ class FormData {
   final HashMap<String, String> parsed;
   FormData(String raw) : parsed = FormData.parse(raw);
 
-  String getStringValue(String valueName) {
-    return parsed[valueName]!;
-  }
-
   String? getStringValueOrNull(String valueName) {
     return parsed[valueName];
   }
@@ -18,7 +14,7 @@ class FormData {
     final HashMap<String, String> dataParsed = HashMap.from({});
     for (final pair in pairs) {
       if (pair.length != 2) {
-        throw "ERROR: malformed form data";
+        return dataParsed;
       }
       dataParsed[pair[0]] = pair[1];
     }

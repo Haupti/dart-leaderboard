@@ -37,8 +37,11 @@ void run() async {
 Future<Authentication?> handleLogin(HttpRequest request) async {
   String content = await utf8.decodeStream(request);
   final data = FormData(content);
-  final username = data.getStringValue("username");
-  final password = data.getStringValue("password");
+  final username = data.getStringValueOrNull("username");
+  final password = data.getStringValueOrNull("password");
+  if (username == null || password == null) {
+    return null;
+  }
   final auth = Authentication.fromAuthString("$username:$password");
   if (auth != null) {
     request.response.statusCode = 200;
