@@ -15,7 +15,7 @@ import 'package:dart_score/domain/utils.dart';
 import 'package:dart_score/global.dart';
 
 void run() async {
-  var server = await HttpServer.bind(InternetAddress.anyIPv6, 3000);
+  var server = await HttpServer.bind(InternetAddress.anyIPv6, 8084);
   await for (HttpRequest request in server) {
     Authentication? auth = Authentication.from(request.headers);
     switch ((request.method, request.uri.path)) {
@@ -40,13 +40,15 @@ Future<Authentication?> handleLogin(HttpRequest request) async {
   final username = data.getStringValue("username");
   final password = data.getStringValue("password");
   final auth = Authentication.fromAuthString("$username:$password");
-  request.response.statusCode = 200;
   if (auth != null) {
+    request.response.statusCode = 200;
     request.response.headers.add("Set-Cookie",
         "username=$username; Domain=${Global.domain}; ${Global.domain == "localhost" ? "" : "Secure"}; Path=/; HttpOnly");
     request.response.headers.add("Set-Cookie",
         "password=$password; Domain=${Global.domain}; ${Global.domain == "localhost" ? "" : "Secure"}; Path=/; HttpOnly");
     request.response.headers.add("HX-Refresh", "true");
+  } else {
+    request.response.statusCode = 403;
   }
   request.response.close();
   return auth;
@@ -60,13 +62,9 @@ Future<void> handleRequest(HttpRequest request, Authentication auth) async {
       ));
       break;
     case ("GET", "/manage-players"):
-      if (auth.level != Level.admin) {
-        request.forbidden();
-      } else {
-        request.respond(ServerResponse.html(
-          basePage(componentManagePlayers(), auth).render(),
-        ));
-      }
+      request.respond(ServerResponse.html(
+        basePage(componentManagePlayers(), auth).render(),
+      ));
       break;
     case ("GET", "/add-match"):
       request.respond(ServerResponse.html(

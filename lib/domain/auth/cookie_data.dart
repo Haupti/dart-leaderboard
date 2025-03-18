@@ -4,10 +4,6 @@ class CookieData {
   final HashMap<String, String> parsed;
   CookieData(String raw) : parsed = CookieData.parse(raw);
 
-  String getStringValue(String valueName) {
-    return parsed[valueName]!;
-  }
-
   String? getStringValueOrNull(String valueName) {
     return parsed[valueName];
   }
@@ -18,7 +14,7 @@ class CookieData {
     final HashMap<String, String> dataParsed = HashMap.from({});
     for (final pair in pairs) {
       if (pair.length != 2) {
-        throw "ERROR: malformed cookie data";
+        return dataParsed;
       }
       dataParsed[pair[0]] = pair[1];
     }

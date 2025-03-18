@@ -29,8 +29,11 @@ class Authentication {
       return null;
     }
     final cookieData = CookieData(cookie);
-    final username = cookieData.getStringValue("username");
-    final password = cookieData.getStringValue("password");
+    final username = cookieData.getStringValueOrNull("username");
+    final password = cookieData.getStringValueOrNull("password");
+    if (username == null || password == null) {
+      return null;
+    }
     final user = UserRepository.getUserOrNull("$username:$password");
     if (user == null) {
       return null;
